@@ -2,25 +2,19 @@
 //ASD 0712
 //Project 2
 
-var parseAccountInfo = function(data){
-		console.log(data);
-};
 
-$(document).bind('pageinit',function(){
+$(function(){
 
 	var aiform = $("#addAccount");
 	
-	aiform.validate();
-	});
+	aiform.validate({
 	
-	{
-	var	invalidHandler = function (form, validator){},
-		submitHandler = function(){
+		invalidHandler: function (form, validator){},
+		submitHandler: function(){
 			var data = aiform.serializeArray();
-			parseAccountInfo(data);
 		}
-	}
-;
+	})
+});
 
 //wait till DOM is ready
 
@@ -31,14 +25,14 @@ $(document).bind('pageinit',function(){
 	}
 	
 	//create select field element, populate with options
-	function wheelHouse(){
+	/*function wheelHouse(){
 		var formTag = document.getElementsByTagName("form"),
 			selectLi = e("select"),
 			makeSelect = document.createElement("select");
 			makeSelect.setAttribute("id", "groups");
 		//comeback to type of media
 	//	selectLi.appendChild(makeSelect);
-	}
+	}*/
 	
 	//find value of radio button
 	function getSelectedRadio(){
@@ -77,21 +71,25 @@ $(document).bind('pageinit',function(){
 	}
 	
 	function toggleControls(n){
+		var displayNone = {"display": "none"};
+		var displayInline = {"display": "inline"};
+		var displayBlock = {"display": "block"};
+		
 		switch(n){
 			case "on":
-				e("foot").style.display = "none";
-				e("allInfo").style.display = "inline";
-				e("accountInfo").style.display = "none";
-				e("remove").style.display = "inline";
-				e("allAccounts").style.display = "none";
-				e("addAccount").style.display = "inline";
+				$("#foot").css = (displayNone)
+				$("#allInfo").css = (displayInline)
+				$("#accountInfo").css = (displayNone)
+				$("#remove").css = (displayInline)
+				$("#allAccounts").css = (displayNone)
+				$("#addAccount").css = (displayInline)
 				break;
 			case "off":
-				e("accountInfo").style.display = "block";
-				e("remove").style.display = "inline";
-				e("allAccounts").style.display = "inline";
-				e("addAccount").style.display = "none";
-				e("items").style.display = "none";
+				$("#accountInfo").css = (displayBlock)
+				$("#remove").css = (displayInline)
+				$("#allAccounts").css = (displayInline)
+				$("#addAccount").css = (displayNone)
+				$("#items").css = (displayNone)
 				break;
 			default:
 				return false;
@@ -107,43 +105,42 @@ $(document).bind('pageinit',function(){
 		getSelectedRadio();
 		getCheckBoxValue();		
 		var item = {};
-			item.fname =["First Name:", e("fname").value];
-			item.lname =["Last Name:", e("lname").value];
+			item.fname =["First Name:", $("#fname").val()];
+			item.lname =["Last Name:", $("#lname").val()];
 			item.sex =["Sex:", sexValue];
-			item.age =["Age:", e("ageRange").value];
+			item.age =["Age:", $("#ageRange").val()];
 			item.reliable =["Is the borrower reliable?", reliableValue];
 			item.job =["Do they have a job?", jobValue];
 			item.replace =["If broken, could they replace it?", replaceValue];
 			item.trust =["Do you fully trust them?", trustValue];
-			item.media =["Media:", e("media").value];
-			item.dname =["Disc Name:", e("dname").value];
-			item.value =["Value:", e("value").value];
-			item.ldate =["Date Lent:", e("ldate").value];
-			item.rdate =["Expected Return Date:", e("rdate").value];
-			item.comments =["Anymore Information?", e("comments").value];
+			item.media =["Media:", $("#media").val()];
+			item.dname =["Disc Name:", $("#dname").val()];
+			item.value =["Value:", $("#value").val()];
+			item.ldate =["Date Lent:", $("#ldate").val()];
+			item.rdate =["Expected Return Date:", $("#rdate").val()];
+			item.comments =["Anymore Information?", $("#comments").val()];
 
 		localStorage.setItem(id, JSON.stringify(item));
 		alert("Information Logged");
 	}
 	
-	function getData(){
+	var getData = function(){
 		toggleControls("on");
 		if(localStorage.length === 0){
 			alert("No saved accounts, default data added.");
-			autoFillData();
+			window.location.reload();
+			return false;
 		}
-		var makeDiv = $("#allInfo");
-		makeDiv.attr("datarole", "content");
-		makeDiv.append("<ul id=" + "makelist")
-		var makeList = $("#allInfo");
-		makeList.attr({
-            dataRole:"listview",
-            dataInset:"true",
-            dataFilter:"true"
+		$("#allInfo").append($("#allInfo"));
+		
+		
+		$("form.input").append("#items")
+        ;
+        $('#items').css({
+        	'display': 'block'
         });
-
 		//document.body.appendChild(makeDiv);
-		e("items").style.display = "block";
+		
 		for(var i = 0, len = localStorage.length; i<len; i++){
 			var makeli = document.createElement("li");
 			var linksLi = document.createElement("li");
@@ -162,7 +159,7 @@ $(document).bind('pageinit',function(){
 				makeSubli.innerHTML = optSubText;
 				makeSubList.appendChild(linksLi);
 			}
-			makeItemLinks(localStorage.key(i), linksLi);
+			makeItemLinks(key);
 		}
 	}
 	function autoFillData(){
@@ -179,7 +176,9 @@ $(document).bind('pageinit',function(){
 		imageLi.append(newImg);
 	}
 	//make Item links function, creates edit and delete links
-	function makeItemLinks(key, linksLi){
+	var makeItemLinks = function (key) {
+		
+		
 		var editLink = document.createElement("a");
 		editLink.href = "#";
 		editLink.key = key;
@@ -202,8 +201,8 @@ $(document).bind('pageinit',function(){
 		var item = JSON.parse(value);
 		toggleControls("off");
 		
-		$("#fname").value = item.fname[1];
-		$("#lname").value = item.lname[1];
+		$("#fname").val = item.fname[1];
+		$("#lname").val = item.lname[1];
 		var radios = document.forms[0].sex;
 		for(var i=0; i<radios.length; i++){
 			if(radios[i].value == "Male" && item.sex[1] == "Male"){
@@ -226,16 +225,16 @@ $(document).bind('pageinit',function(){
 		if(item.trust[1] == "Yes"){
 			e("trust").setAttribute("checked", "checked");
 		}*/
-		$("#dname").value = item.dname[1];
-		$("#value").value = item.value[1];
-		$("#ldate").value = item.ldate[1];
-		$("#rdate").value = item.rdate[1];
-		$("#comments").value = item.comments[1];
+		$("#dname").value(item.dname[1]);
+		$("#value").value(item.value[1]);
+		$("#ldate").value(item.ldate[1]);
+		$("#rdate").value(item.rdate[1]);
+		$("#comments").value(item.comments[1]);
 		
 		$(save).unbind("click", saveData);
 		$("#submit").value = "Edit Contact";
 		var editSubmit = $("#submit");
-		$(editSubmit).bind("click", validate);
+		$(editSubmit).on("click", validate);
 		editSubmit.key = this.key;
 	}
 	
@@ -313,12 +312,12 @@ $(document).bind('pageinit',function(){
 		jobValue = "No",
 		replaceValue = "No",
 		trustValue = "No",
-		errMsg = e("errors")
+		errMsg = $("errors")
 	;
-	wheelHouse();
+//	wheelHouse();
 	
 	//links and submit button
-	$("#remove").bind("click", deleteData);
-	$("#allAccounts").bind("click", getData);
-	$("#submit").bind("click", validate);
+	$("#remove").on("click", deleteData);
+	$("#allAccounts").on("click", getData);
+	$("#submit").on("click", validate);
 
