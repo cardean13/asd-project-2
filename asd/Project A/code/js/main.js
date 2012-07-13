@@ -131,7 +131,7 @@ $(function(){
 			window.location.reload();
 			return false;
 		}
-		$("#allInfo").append($("#allInfo"));
+		$("#allInfo").append($("#info2"));
 		
 		
 		$("form.input").append("#items")
